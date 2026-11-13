@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M-Store - Sabse Sasta, Sabse Achha</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f6fff6;padding-bottom:90px}
+.header{background:#0a8a2e;color:#fff;padding:18px 14px;text-align:center;border-radius:0 0 20px 20px}
+.header h1{font-size:32px}.header h1 span{color:#ffe600}
+.header p{color:#ffe600;font-weight:bold}
+.header a{color:#fff;text-decoration:none;font-weight:bold;display:block;margin-top:6px}
+.admin-btn{background:#ffe600;border:0;padding:10px 16px;border-radius:20px;font-weight:bold;margin:12px auto;display:block}
+.search{margin:0 12px 12px;background:#fff;padding:12px;border-radius:12px}
+.search input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}
+h2{padding:10px 14px 4px}
+.offers{display:flex;gap:10px;padding:10px;overflow:auto}
+.offer{min-width:200px;background:#0a8a2e;color:#fff;padding:14px;border-radius:14px}
+.offer:nth-child(2){background:#ffe600;color:#000}
+.offer:nth-child(3){background:#fff;color:#000;border:2px solid #0a8a2e}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px #0001;text-align:center;padding-bottom:10px}
+.card img{width:100%;height:130px;object-fit:cover}
+.card h3{font-size:14px;margin:8px 4px 2px}.card p{font-size:12px;color:#666}
+.price{color:#0a8a2e;font-weight:bold;font-size:17px;margin:4px}
+.add{background:#0a8a2e;color:#fff;border:0;padding:9px 14px;border-radius:20px;font-weight:bold;width:90%}
+.gift{background:#fff3cd;margin:12px;padding:14px;border-radius:14px;border:1px dashed #e6a800}
+.footer{background:#8b0000;color:#fff;text-align:center;padding:16px;margin:12px;border-radius:14px}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;background:#0a8a2e;color:#fff;padding:14px;display:flex;justify-content:space-between;align-items:center}
+.cart-bar button{background:#ffe600;border:0;padding:10px 18px;border-radius:20px;font-weight:bold}
+.modal{display:none;position:fixed;inset:0;background:#0008;padding:14px;overflow:auto}
+.modal-box{background:#fff;border-radius:16px;padding:16px}
+.modal-box input,.modal-box textarea{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
+.wa{background:#25D366;color:#fff;border:0;padding:13px;width:100%;border-radius:10px;font-size:16px;font-weight:bold}
+.close{background:#eee;border:0;padding:8px 14px;border-radius:20px;float:right}
+.edit-card{background:#f9f9f9;padding:12px;border-radius:12px;margin:10px 0;border:1px solid #eee}
+.edit-card label{font-size:12px;font-weight:bold;color:#555}
+.del{background:#ff3b30;color:#fff;border:0;padding:8px 14px;border-radius:20px;margin-top:6px}
+.save{background:#0a8a2e;color:#fff;border:0;padding:13px;width:100%;border-radius:10px;font-size:16px;font-weight:bold;margin-top:10px}
+.add-new{background:#ffe600;border:0;padding:12px;width:100%;border-radius:10px;font-weight:bold;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>M-Store <span>- Bumper Offer!</span></h1>
+<p>• सबसे सस्ता, सबसे अच्छा! •</p>
+<a href="tel:6394174134">📞 Call: 6394174134</a>
+<p style="font-size:12px;color:#fff;margin-top:4px">WhatsApp Order: 8176810360</p>
+</div>
+<button class="admin-btn" onclick="openAdmin()">⚙️ Dukaan Badlo - Rate / Weight / Photo / Naya Item</button>
+<div class="search"><input id="search" placeholder="🔍 Search - Dry Fruits, Masale, Biscuit..." oninput="filterProducts()"></div>
+<h2>🎁 Offers For You</h2>
+<div class="offers">
+<div class="offer"><b>Offer 1</b><p>मात्र ₹99 का सामान खरीदें और पाएं ₹250 का Gift</p></div>
+<div class="offer"><b>Offer 2</b><p>मात्र ₹299 का सामान खरीदें और पाएं ₹500 का Gift</p></div>
+<div class="offer"><b>Offer 3</b><p>1 साल लगातार खरीदारी पर बराबर Gift</p></div>
+</div>
+<h2>Popular Products</h2>
+<div class="grid" id="grid"></div>
+<div class="gift"><h3>🎁 FREE GIFT - Chashma, Purse, Locket (Boys), Belt, Cap, Tiffin, Smart Watch, Ear Phone, Tea Cup Set, Gilas Set</h3><p>Offer 1: ₹99 pe ₹250 Gift | Offer 2: ₹299 pe ₹500 Gift<br>*शर्तें लागू | 18% Charges Only</p></div>
+<div class="footer"><b>M-Store - Call: 6394174134 | WhatsApp: 8176810360</b><br>Alka Tower Market - IInd Floor - Hi-Tech Computer के बगल</div>
+<div class="cart-bar"><span id="cartText">🛒 Cart: 0 item | ₹0</span><button onclick="openCart()">Cart Dekho</button></div>
+<div class="modal" id="modal"><div class="modal-box">
+<button class="close" onclick="closeModal('modal')">X</button>
+<h2>🛒 Aapka Cart</h2><div id="cartItems"></div><h3 id="total"></h3>
+<input id="name" placeholder="Aapka Naam *"><input id="phone" placeholder="Mobile Number *">
+<textarea id="address" placeholder="Poora Address *"></textarea>
+<button class="wa" onclick="orderWhatsApp()">✅ WhatsApp pe Order Bhejo</button>
+</div></div>
+<div class="modal" id="adminModal"><div class="modal-box">
+<button class="close" onclick="closeModal('adminModal')">X</button>
+<h2>⚙️ Dukaan Badlo</h2>
+<p style="font-size:13px;color:#666">Yaha se sab kuch badal sakte ho. Badal ke neeche Save dabao.</p>
+<div id="adminList"></div>
+<button class="add-new" onclick="addNewProduct()">➕ Naya Item Jodo</button>
+<button class="save" onclick="saveAll()">💾 Save Kar Do</button>
+<p style="font-size:12px;color:#888;margin-top:8px">Photo badalne ke liye: Google pe item ki photo kholo > Photo pe lamba dabao > Copy Image Link > Yaha Photo wale box me Paste kar do.</p>
+</div></div>
+<script>
+let defaultProducts=[
+{name:"Mixed Dry Fruits",price:99,weight:"500g Pack",img:"https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?w=500"},
+{name:"Kaju Badam",price:199,weight:"250g Pack",img:"https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500"},
+{name:"Haldi Powder",price:49,weight:"100g Pack",img:"https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=500"},
+{name:"Dhaniya Powder",price:45,weight:"100g Pack",img:"https://images.unsplash.com/photo-1532336414038-cf19250c5757?w=500"},
+{name:"Mircha Powder",price:55,weight:"150g Pack",img:"https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?w=500"},
+{name:"Biscuit Combo",price:99,weight:"Combo Pack",img:"https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500"},
+];
+let products = JSON.parse(localStorage.getItem('mstore_rates')) || defaultProducts;
+let cart={};
+function render(list){
+document.getElementById('grid').innerHTML=list.map((p,i)=>`
+<div class="card"><img src="${p.img}"><h3>${p.name}</h3><p>${p.weight}</p><div class="price">₹${p.price}</div>
+<button class="add" onclick="add(${products.indexOf(p)})">Add to Cart</button></div>`).join('');
+}
+function add(i){cart[i]=(cart[i]||0)+1;update();}
+function update(){let c=0,t=0;for(let k in cart){c+=cart[k];t+=cart[k]*products[k].price}document.getElementById('cartText').innerText=`🛒 Cart: ${c} item | ₹${t}`;}
+function filterProducts(){let q=document.getElementById('search').value.toLowerCase();render(products.filter(p=>p.name.toLowerCase().includes(q)));}
+function openCart(){
+let h="";let t=0;for(let k in cart){let p=products[k];t+=cart[k]*p.price;h+=`<p>${p.name} x ${cart[k]} = ₹${cart[k]*p.price} <button onclick="removeItem(${k})">❌</button></p>`}
+if(!h) h="<p>Cart khaali hai.</p>";
+document.getElementById('cartItems').innerHTML=h;document.getElementById('total').innerText="Total: ₹"+t;
+document.getElementById('modal').style.display='block';
+}
+function removeItem(k){delete cart[k];update();openCart();}
+function closeModal(id){document.getElementById(id).style.display='none';}
+function orderWhatsApp(){
+let n=document.getElementById('name').value, ph=document.getElementById('phone').value, ad=document.getElementById('address').value;
+if(!n||!ph||!ad){alert("Naam, Mobile, Address bharo dost!");return;}
+let msg="🛒 *M-STORE NEW ORDER*%0A%0A";
+for(let k in cart){msg+=`• ${products[k].name} x ${cart[k]} = ₹${cart[k]*products[k].price}%0A`}
+let t=0;for(let k in cart) t+=cart[k]*products[k].price;
+msg+=`%0A*Total: ₹${t}*%0A%0A👤 ${n}%0A📞 ${ph}%0A📍 ${ad}`;
+window.open("https://wa.me/918176810360?text="+msg,"_blank");
+}
+function openAdmin(){
+document.getElementById('adminList').innerHTML=products.map((p,i)=>`
+<div class="edit-card">
+<label>Item Ka Naam</label><input id="name-${i}" value="${p.name}">
+<label>Weight - jaise 500g / 1kg</label><input id="weight-${i}" value="${p.weight}">
+<label>Rate - ₹</label><input type="number" id="rate-${i}" value="${p.price}">
+<label>Photo Link</label><input id="img-${i}" value="${p.img}">
+<button class="del" onclick="deleteProduct(${i})">🗑️ Ye Item Hatao</button>
+</div>`).join('');
+document.getElementById('adminModal').style.display='block';
+}
+function addNewProduct(){
+products.push({name:"Naya Item",price:99,weight:"500g Pack",img:"https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?w=500"});
+openAdmin();
+}
+function deleteProduct(i){if(confirm("Pakka hatana hai?")){products.splice(i,1);openAdmin();}}
+function saveAll(){
+products.forEach((p,i)=>{
+p.name=document.getElementById('name-'+i).value;
+p.weight=document.getElementById('weight-'+i).value;
+p.price=parseInt(document.getElementById('rate-'+i).value)||0;
+p.img=document.getElementById('img-'+i).value;
+});
+localStorage.setItem('mstore_rates',JSON.stringify(products));
+render(products);update();closeModal('adminModal');
+alert("Ho gaya dost! Sab save ho gaya ✅");
+}
+render(products);
+</script>
+</body>
+</html>
